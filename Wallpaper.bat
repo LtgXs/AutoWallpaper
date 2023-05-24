@@ -1,5 +1,5 @@
 @echo off
-
+md "%appdata%\AutoWallpaper"
 :Dwn
 certutil -urlcache -split -f https://api.dujin.org/bing/1920.php “%appdata%\AutoWallpaper\Wallpaper.jpg”
 
