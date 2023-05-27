@@ -1,13 +1,13 @@
 @echo off
 if exist config.ini goto config
-
 set i=0
 set name=%date:~0,4%.%date:~5,2%.%date:~8,2%
+if exist "%appdata%\AutoWallpaper\%name%\%name%.jpg" goto Ext
 if not exist "%appdata%\AutoWallpaper" md "%appdata%\AutoWallpaper"
 if not exist "%appdata%\AutoWallpaper\%name%" md "%appdata%\AutoWallpaper\%name%"
+
 echo.>>"%appdata%\AutoWallpaper\%name%\%name%.log"
 echo ********************Log Start********************>>"%appdata%\AutoWallpaper\%name%\%name%.log"
-if exist "%appdata%\AutoWallpaper\%name%\%name%.jpg" goto Exit
 ver | find "10.0." > NUL &&  goto DwnHMsg
 goto DwnLMsg
 
@@ -93,6 +93,12 @@ exit
 :Change
 copy /Y "%appdata%\Change.exe" "%appdata%\AutoWallpaper"
 echo [%name%-%time:~0,2%:%time:~3,2%] Download Completed >>"%appdata%\AutoWallpaper\%name%\%name%.log"
+
+::Options "Copy to desktop or not"
+echo %ctd%|find "false" >NUL && goto ChangeFC
+echo %ctd%|find "False" >NUL && goto ChangeFC
+echo %ctd%|find "FALSE" >NUL && goto ChangeFC
+
 del "%userprofile%\desktop\wallpaper.jpg"
 del "%appdata%\AutoWallpaper\wallpaper.jpg"
 copy "%appdata%\AutoWallpaper\%name%\%name%.jpg" "%userprofile%\desktop"
@@ -105,9 +111,21 @@ echo [%name%-%time:~0,2%:%time:~3,2%] Change Wallpaper Completed >>"%appdata%\Au
 echo *********************Log End*********************>>"%appdata%\AutoWallpaper\%name%\%name%.log"
 exit
 
+:ChangeFC
+del "%appdata%\AutoWallpaper\wallpaper.jpg"
+copy "%appdata%\AutoWallpaper\%name%\%name%.jpg" "%appdata%\AutoWallpaper"
+ren "%appdata%\AutoWallpaper\%name%.jpg" "wallpaper.jpg"
+cd "%appdata%\AutoWallpaper"
+Change.exe
+RunDll32.exe USER32.DLL,UpdatePerUserSystemParameters
+echo [%name%-%time:~0,2%:%time:~3,2%] Change Wallpaper Completed >>"%appdata%\AutoWallpaper\%name%\%name%.log"
+echo *********************Log End*********************>>"%appdata%\AutoWallpaper\%name%\%name%.log"
+exit
+
 :Ext
 echo [%name%-%time:~0,2%:%time:~3,2%] Today's wallpaper already existed >>"%appdata%\AutoWallpaper\%name%\%name%.log"
 echo *********************Log End*********************>>"%appdata%\AutoWallpaper\%name%\%name%.log"
+exit
 
 
 
@@ -133,20 +151,26 @@ for /f "tokens=1 delims=<>" %%a in (
 for /f "tokens=1 delims=<>" %%a in (
     'find /i "chk" ^< "%~dp0config.ini"' 
 ) do set "chk=%%a"
+
+for /f "tokens=1 delims=<>" %%a in (
+    'find /i "ctd" ^< "%~dp0config.ini"' 
+) do set "ctd=%%a"
 ::Read End
 if "%idx%"=="" set idx=0
 if "%mkt%"=="" set idx=zh-CN
 if "%chk%"=="" set chk=true
+if "%ctd%"=="" set ctd=true
 if not exist "%appdata%\AutoWallpaper" md "%appdata%\AutoWallpaper"
 if not exist "%appdata%\AutoWallpaper\%name%" md "%appdata%\AutoWallpaper\%name%"
 echo.>>"%appdata%\AutoWallpaper\%name%\%name%.log"
 echo ********************Log Start********************>>"%appdata%\AutoWallpaper\%name%\%name%.log"
 echo [%name%-%time:~0,2%:%time:~3,2%] Found config.ini switch to config mode>>"%appdata%\AutoWallpaper\%name%\%name%.log"
-echo [%name%-%time:~0,2%:%time:~3,2%] Config value: %idx% %mkt% %chk% >>"%appdata%\AutoWallpaper\%name%\%name%.log"
+echo [%name%-%time:~0,2%:%time:~3,2%] Config value: %idx% %mkt% %chk% %ctd% >>"%appdata%\AutoWallpaper\%name%\%name%.log"
+::Options "Check if the picture has been already or not"
 echo %chk%|find "false" >NUL && goto CDW
 echo %chk%|find "False" >NUL && goto CDW
 echo %chk%|find "FALSE" >NUL && goto CDW
-if exist "%appdata%\AutoWallpaper\%name%\%name%.jpg" goto Exit
+if exist "%appdata%\AutoWallpaper\%name%\%name%.jpg" goto Ext
 
 :CDW
 ver | find "10.0." > NUL &&  goto CDwnHMsg
