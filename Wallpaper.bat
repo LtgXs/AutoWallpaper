@@ -13,7 +13,8 @@ goto DwnLMsg
 echo [%name%-%time:~0,2%:%time:~3,2%] System version is Win8.0 or higher use powershell to download >>"%appdata%\AutoWallpaper\%name%\%name%.log"
 :DwnH
 echo [%name%-%time:~0,2%:%time:~3,2%] Getting url from bing api >>"%appdata%\AutoWallpaper\%name%\%name%.log"
-powershell (new-object System.Net.WebClient).DownloadFile('https://www.bing.com/HPImageArchive.aspx?n=1','%appdata%\AutoWallpaper\%name%\api.xml')
+powershell (new-object System.Net.WebClient).DownloadFile('https://www.bing.com/HPImageArchive.aspx?n=1^&mkt=zh-CN','%appdata%\AutoWallpaper\%name%\api.xml')
+powershell (new-object System.Net.WebClient).DownloadFile('https://www.bing.com/HPImageArchive.aspx?n=1^&mkt=zh-CN^&format=js^&idx=0','%appdata%\AutoWallpaper\%name%\api.json')
 if exist "%appdata%\AutoWallpaper\%name%\api.xml" echo [%name%-%time:~0,2%:%time:~3,2%] Successful >>"%appdata%\AutoWallpaper\%name%\%name%.log"
 set url=https://www.bing.com
 set size=_UHD.jpg
@@ -37,7 +38,7 @@ goto DwnH
 echo [%name%-%time:~0,2%:%time:~3,2%] System version is Win7.0 or lower use certutil to download (May stopped by antiMalware software)>>"%appdata%\AutoWallpaper\%name%\%name%.log"
 :DwnL
 echo [%name%-%time:~0,2%:%time:~3,2%] Getting url from bing api >>"%appdata%\AutoWallpaper\%name%\%name%.log"
-certutil -urlcache -split -f https://www.bing.com/HPImageArchive.aspx?n=1 "%appdata%\AutoWallpaper\%name%\api.xml"
+certutil -urlcache -split -f https://www.bing.com/HPImageArchive.aspx?n=1^&mkt=zh-CN "%appdata%\AutoWallpaper\%name%\api.xml"
 if exist "%appdata%\AutoWallpaper\%name%\api.xml" echo [%name%-%time:~0,2%:%time:~3,2%] Successful >>"%appdata%\AutoWallpaper\%name%\%name%.log"
 set url=https://www.bing.com
 set size=_UHD.jpg
