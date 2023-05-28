@@ -1,5 +1,5 @@
 @echo off
-if exist config.ini goto config
+if exist "%~dp0config.ini" goto config
 set i=0
 set name=%date:~0,4%.%date:~5,2%.%date:~8,2%
 if exist "%appdata%\AutoWallpaper\%name%\%name%.jpg" goto Ext
