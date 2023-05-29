@@ -224,3 +224,4 @@ if %i% GEQ 10 goto Failed
 timeout /t 3
 echo [%name%-%time:~0,2%:%time:~3,2%] Try Download Again (%i%/10) >>"%appdata%\AutoWallpaper\%name%\%name%.log"
 goto CDwnL
+::By Little Gao
