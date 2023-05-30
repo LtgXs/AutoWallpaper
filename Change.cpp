@@ -4,7 +4,7 @@ using namespace std;
 
 int main()
 {
-    //隐藏控制台
+    //Hide Console
     HWND hWnd = GetConsoleWindow();
     ShowWindow(hWnd, SW_HIDE);
 
