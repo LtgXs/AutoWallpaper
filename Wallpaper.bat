@@ -92,7 +92,14 @@ echo *********************Log End*********************>>"%appdata%\AutoWallpaper
 exit
 
 :Change
-copy /Y "%appdata%\Change.exe" "%appdata%\AutoWallpaper"
+::Use Change.vbs
+ver | find "5.2." > NUL && copy /Y "%appdata%\Change.vbs" "%appdata%\AutoWallpaper"
+ver | find "6.1." > NUL && copy /Y "%appdata%\Change.vbs" "%appdata%\AutoWallpaper"
+ver | find "5.2." > NUL && copy /Y "%appdata%\Change.vbs" "%appdata%\AutoWallpaper"
+::Use Change.exe
+ver | find "6.2." > NUL && copy /Y "%appdata%\Change.exe" "%appdata%\AutoWallpaper"
+ver | find "6.3." > NUL && copy /Y "%appdata%\Change.exe" "%appdata%\AutoWallpaper"
+ver | find "10.0." > NUL && copy /Y "%appdata%\Change.exe" "%appdata%\AutoWallpaper"
 echo [%name%-%time:~0,2%:%time:~3,2%] Download Completed >>"%appdata%\AutoWallpaper\%name%\%name%.log"
 
 ::Options "Copy to desktop or not"
@@ -106,7 +113,12 @@ copy "%appdata%\AutoWallpaper\%name%\%name%.jpg" "%userprofile%\desktop"
 ren "%userprofile%\desktop\%name%.jpg" "wallpaper.jpg"
 copy "%userprofile%\desktop\wallpaper.jpg" "%appdata%\AutoWallpaper"
 cd "%appdata%\AutoWallpaper"
-Change.exe
+ver | find "5.1." > NUL && Change.vbs
+ver | find "6.1." > NUL && Change.vbs
+ver | find "5.2." > NUL && Change.vbs
+ver | find "6.2." > NUL && Change.exe
+ver | find "6.3." > NUL && Change.exe
+ver | find "10.0." >NUL && Change.exe
 RunDll32.exe USER32.DLL,UpdatePerUserSystemParameters
 echo [%name%-%time:~0,2%:%time:~3,2%] Change Wallpaper Completed >>"%appdata%\AutoWallpaper\%name%\%name%.log"
 echo *********************Log End*********************>>"%appdata%\AutoWallpaper\%name%\%name%.log"
@@ -117,7 +129,12 @@ del "%appdata%\AutoWallpaper\wallpaper.jpg"
 copy "%appdata%\AutoWallpaper\%name%\%name%.jpg" "%appdata%\AutoWallpaper"
 ren "%appdata%\AutoWallpaper\%name%.jpg" "wallpaper.jpg"
 cd "%appdata%\AutoWallpaper"
-Change.exe
+ver | find "5.1." > NUL && Change.vbs
+ver | find "6.1." > NUL && Change.vbs
+ver | find "5.2." > NUL && Change.vbs
+ver | find "6.2." > NUL && Change.exe
+ver | find "6.3." > NUL && Change.exe
+ver | find "10.0." >NUL && Change.exe
 RunDll32.exe USER32.DLL,UpdatePerUserSystemParameters
 echo [%name%-%time:~0,2%:%time:~3,2%] Change Wallpaper Completed >>"%appdata%\AutoWallpaper\%name%\%name%.log"
 echo *********************Log End*********************>>"%appdata%\AutoWallpaper\%name%\%name%.log"
