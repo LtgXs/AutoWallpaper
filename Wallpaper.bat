@@ -18,12 +18,25 @@ for /f "tokens=1 delims=<>" %%a in (
 for /f "tokens=1 delims=<>" %%a in (
     'find /i "ctd" ^< "%~dp0config.ini"' 
 ) do set "ctd=%%a"
+    ::Enable watermark or not
+for /f "tokens=1 delims=<>" %%a in (
+    'find /i "wtm" ^< "%~dp0config.ini"' 
+) do set "wtm=%%a"
+    ::Watermark path(suggest to use .png)
+for /f "tokens=2 delims=<>" %%a in (
+    'find /i "wmp" ^< "%~dp0config.ini"' 
+) do set "wmp=%%a"
+
 
 ::check config
 if "%idx%"=="" set idx=idx=0
 if "%mkt%"=="" set mkt=mkt=zh-CN
 if "%chk%"=="" set chk=chk=true
 if "%ctd%"=="" set ctd=ctd=true
+if "%wtm%"=="" set wtm=wtm=true
+if "%wmp%"=="" set wmp=%appdata%\watermark.png
+set wmp=%wmp:~4%
+if not "%wtm%"=="wtm=true" set wtm=wtm=false
 
 ::check system ver
 ver | find "5.1." > NUL && set IsWin10=0
@@ -50,7 +63,7 @@ if not exist %folder% md %folder%
 if not exist %dfolder% md %dfolder%
 echo.>>"%dfolder%\%name%.log"
 echo ********************Log Start********************>>"%dfolder%\%name%.log"
-echo [%name%-%time:~0,2%:%time:~3,2%] Config value: %idx% %mkt% %chk% %ctd% >>"%dfolder%\%name%.log"
+echo [%name%-%time:~0,2%:%time:~3,2%] Config value: %idx% %mkt% %chk% %ctd% %wtm% wmp=%wmp%>>"%dfolder%\%name%.log"
 ::Options "Check if the picture has been already or not"
 echo %chk%|find "false" >NUL && goto DwnMsg
 if exist "%dfolder%\%name%.jpg" goto Ext
@@ -110,13 +123,17 @@ goto Dwn
 ::Use Change.exe
 %w10% copy /Y "%appdata%\Change.exe" %folder%
 echo [%name%-%time:~0,2%:%time:~3,2%] Download Completed >>"%dfolder%\%name%.log"
-::Options "Copy to desktop or not"
-echo %ctd%|find "true" >NUL && set IsCtd=1
 del "%userprofile%\desktop\wallpaper.jpg"
 del "%appdata%\AutoWallpaper\wallpaper.jpg"
-copy "%dfolder%\%name%.jpg" "%appdata%\AutoWallpaper"
-ren "%appdata%\AutoWallpaper\%name%.jpg" "wallpaper.jpg"
-echo %IsCtd%|find "1" && copy "%appdata%\AutoWallpaper\wallpaper.jpg" "%userprofile%\desktop"
+
+::add watermark
+echo %wtm%|find "true" && cd "%appdata%\AutoWallpaper\main" && ffmpeg -i "%dfolder%\%name%.jpg" -i "%wmp%" -filter_complex "overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/1.2" -q:v 0 "%appdata%\AutoWallpaper\wallpaper.jpg" & if not exist "%appdata%\AutoWallpaper\wallpaper.jpg" ffmpeg -i "%dfolder%\%name%.jpg" -i "%appdata%\watermark.png" -filter_complex "overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/1.2" -q:v 0 "%appdata%\AutoWallpaper\wallpaper.jpg"
+::none watermark
+echo %wtm%|find "false" && copy "%dfolder%\%name%.jpg" "%appdata%\AutoWallpaper"
+echo %wtm%|find "false" && ren "%appdata%\AutoWallpaper\%name%.jpg" "wallpaper.jpg"
+::Copy to desktop or not
+echo %ctd%|find "true" && copy "%appdata%\AutoWallpaper\wallpaper.jpg" "%userprofile%\desktop"
+
 
 cd %folder%
 %w7% Change.vbs
