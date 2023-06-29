@@ -26,7 +26,13 @@ for /f "tokens=1 delims=<>" %%a in (
 for /f "tokens=2 delims=<>" %%a in (
     'find /i "wmp" ^< "%~dp0config.ini"' 
 ) do set "wmp=%%a"
-
+    ::Watermark POS
+for /f "tokens=2 delims=<>" %%a in (
+    'find /i "wPosX" ^< "%~dp0config.ini"' 
+) do set "wPosX=%%a"
+for /f "tokens=2 delims=<>" %%a in (
+    'find /i "wPosY" ^< "%~dp0config.ini"' 
+) do set "wPosY=%%a"
 
 ::check config
 if "%idx%"=="" set idx=idx=0
@@ -35,7 +41,11 @@ if "%chk%"=="" set chk=chk=true
 if "%ctd%"=="" set ctd=ctd=true
 if "%wtm%"=="" set wtm=wtm=true
 if "%wmp%"=="" set wmp=%appdata%\watermark.png
+if "%wPosY%"=="" set wPosY=wPosY=1.2
+if "%wPosX%"=="" set wPosX=wPosX=2
 set wmp=%wmp:~4%
+set wPosX=%wPosX:~6%
+set wPosY=%wPosY:~6%
 if not "%wtm%"=="wtm=true" set wtm=wtm=false
 
 ::check system ver
@@ -127,7 +137,7 @@ del "%userprofile%\desktop\wallpaper.jpg"
 del "%appdata%\AutoWallpaper\wallpaper.jpg"
 
 ::add watermark
-echo %wtm%|find "true" && cd "%appdata%\AutoWallpaper\main" && ffmpeg -i "%dfolder%\%name%.jpg" -i "%wmp%" -filter_complex "overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/1.2" -q:v 0 "%appdata%\AutoWallpaper\wallpaper.jpg" & if not exist "%appdata%\AutoWallpaper\wallpaper.jpg" ffmpeg -i "%dfolder%\%name%.jpg" -i "%appdata%\watermark.png" -filter_complex "overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/1.2" -q:v 0 "%appdata%\AutoWallpaper\wallpaper.jpg"
+echo %wtm%|find "true" && cd "%appdata%\AutoWallpaper\main" && ffmpeg -i "%dfolder%\%name%.jpg" -i "%wmp%" -filter_complex "overlay=(main_w-overlay_w)/%wPosX%:(main_h-overlay_h)/%wPosY%" -q:v 0 "%appdata%\AutoWallpaper\wallpaper.jpg" & if not exist "%appdata%\AutoWallpaper\wallpaper.jpg" ffmpeg -i "%dfolder%\%name%.jpg" -i "%appdata%\watermark.png" -filter_complex "overlay=(main_w-overlay_w)/%wPosX%:(main_h-overlay_h)/%wPosY%" -q:v 0 "%appdata%\AutoWallpaper\wallpaper.jpg"
 ::none watermark
 echo %wtm%|find "false" && copy "%dfolder%\%name%.jpg" "%appdata%\AutoWallpaper"
 echo %wtm%|find "false" && ren "%appdata%\AutoWallpaper\%name%.jpg" "wallpaper.jpg"
