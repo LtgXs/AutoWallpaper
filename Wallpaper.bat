@@ -122,6 +122,7 @@ del "%appdata%\AutoWallpaper\wallpaper.jpg"
 set wtc=%wtc:~4%
 set ii=0
 ::add copyright watermark
+del /f /s /q %appdata%\AutoWallpaper\wallpaper.jpg
 cd "%appdata%\AutoWallpaper\main" && ffmpeg -i "%dfolder%\%name%.jpg" -i "%appdata%\watermark.png" -filter_complex "overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/1.2" -q:v 0 "%appdata%\AutoWallpaper\wallpaper.jpg"
 echo %wtm%|find "true" && goto WatermarkLoop
 goto Change
@@ -129,7 +130,7 @@ goto Change
 :WatermarkLoop
 set /a ii=%ii%+1
 echo %ii%
-if %ii%=1 echo.>>"%dfolder%\%name%.log"
+echo %ii%|find "1" && echo.>>"%dfolder%\%name%.log"
 echo [%name%-%time:~0,2%:%time:~3,2%] Loading custom watermark %ii% >>"%dfolder%\%name%.log"
 ::Read Config
     ::Watermark path(suggest to use .png)
@@ -162,7 +163,6 @@ if %ii% GEQ %wtc% goto Change
 goto WatermarkLoop
 
 :Change
-echo.>>"%dfolder%\%name%.log"
 ::Windows 7 Use Change.vbs
 %w7% copy /Y "%appdata%\Change.vbs" %folder%
 ::Windows 10 Use Change.exe
